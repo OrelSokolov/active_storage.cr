@@ -1,0 +1,37 @@
+svc_exists	true
+svc_download	SERVICE DATA
+svc_missing	false
+svc_delete	false
+svc_download_missing	raise:ActiveStorage::FileNotFoundError
+svc_checksum_mismatch	raise:ActiveStorage::IntegrityError
+svc_binary_roundtrip	true
+svc_url_shape	true
+svc_url_fetch	200:URL DATA
+svc_url_expired	403
+blob_service_name	Minio
+blob_byte_size	true
+blob_key_shape	true
+blob_download	true
+blob_representable?	true
+var_key_format	true
+var_unprocessed	false
+var_content_type	image/png
+var_filename	cat.png
+var_processed	true
+var_dimensions	100x60
+var_smaller	true
+var_url_shape	true
+var_url_fetch	200
+var_fill_dimensions	64x64
+var_rotate_dimensions	180x300
+var_format_content_type	image/webp
+att_s3_attached	true
+att_s3_download	true
+att_s3_url_signature	true
+att_s3_variant	10x6
+s3du_blob_row	[true, false, true]
+s3du_url_shape	[true, "AWS4-HMAC-SHA256", "content-length;content-md5;content-type;host", true, "300"]
+s3du_headers	{"Content-Type" => "application/octet-stream", "Content-MD5" => "+thk+uS7J3Vu2I9M7/BGVA==", "Content-Disposition" => "inline; filename=\"racecar.bin\"; filename*=UTF-8''racecar.bin"}
+s3du_put_status	200
+s3du_roundtrip	true
+s3du_put_bad_checksum	403

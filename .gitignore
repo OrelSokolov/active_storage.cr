@@ -1,0 +1,8 @@
+/lib/
+/.shards/
+/tmp/
+*.dwarf
+/.crystal/
+/active_storage_cr
+db/schema.yml.bak
+*.log

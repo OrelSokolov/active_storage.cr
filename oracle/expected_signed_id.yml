@@ -1,0 +1,14 @@
+sid_blob	eyJfcmFpbHMiOnsiZGF0YSI6MTIzNDU2Nzg5MCwicHVyIjoiYmxvYl9pZCJ9fQ--cae798d647777b0f48238ceaf76749c1a4755a3b668fda486e0c7ba970093c02
+sid_payload	{"_rails":{"data":1234567890,"pur":"blob_id"}}
+sid_digest_shape	[64, true]
+sid_data_b64url_nopad	true
+sid_find	1234567890
+sid_find_nil	nil
+sid_find_legacy_env	[1234567890, "{\"_rails\":{\"data\":\"1234567890\",\"pur\":\"blob_id\"}}"]
+sid_tampered	raise:ActiveSupport::MessageVerifier::InvalidSignature
+sid_wrong_secret	nil
+sid_missing_record	raise:ActiveRecord::RecordNotFound
+sid_id_1	eyJfcmFpbHMiOnsiZGF0YSI6IjEiLCJwdXIiOiJibG9iX2lkIn19--bcf1e5348a3e5df1e2593b23c0d5d43d40135b15c3dfabf6915814cf323c5aa8
+disk_token	eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmaXhlZGtleWZpeGVka2V5Zml4ZWRrZXkxMiIsImNvbnRlbnRfdHlwZSI6InRleHQvcGxhaW4iLCJjb250ZW50X2xlbmd0aCI6OSwiY2hlY2tzdW0iOiJVVERQSFdNMWVzY1RMWXlRdnN5TTB3PT0iLCJzZXJ2aWNlX25hbWUiOiJMb2NhbCJ9LCJleHAiOiIyMDMwLTAxLTAxVDAwOjAwOjAwLjAwMFoiLCJwdXIiOiJibG9iX3Rva2VuIn19--4a2effd304dcb4dc0a70014a200744d3257c2a08a6ea2bf102bfbd6ff5845959
+disk_token_payload	{"_rails":{"data":{"key":"k","content_type":null,"content_length":0,"checksum":null,"service_name":"Local"},"exp":"2030-01-01T00:00:00.000Z","pur":"blob_token"}}
+disk_key_payload	{"key" => "k2", "disposition" => "inline; filename=\"a.png\"", "content_type" => "image/png", "service_name" => "Local"}

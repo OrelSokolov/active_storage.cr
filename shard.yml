@@ -1,0 +1,12 @@
+name: active_storage_cr
+version: 0.1.0
+crystal: ">= 1.21.0"
+dependencies:
+  active_support_cr:
+    path: ../active_support.cr
+  active_record_cr:
+    path: ../active_record.cr
+  # Only needed by src/controllers.cr (direct upload HTTP layer, opt-in
+  # require — not pulled in by the umbrella src/active_storage_cr.cr).
+  action_pack_cr:
+    path: ../action_pack.cr

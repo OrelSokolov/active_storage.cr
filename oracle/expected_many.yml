@@ -1,0 +1,17 @@
+many_attached_new	false
+many_empty_count	0
+many_count_1	1
+many_attached	true
+many_order	["one.png", "two.jpg", "three.gif"]
+many_blobs_sizes	[3, 3, 5]
+many_blobs_types	["image/png", "image/jpeg", "image/gif"]
+many_dl_first	ONE
+many_dl_last	THREE
+many_attachments_cnt	3
+many_blobs_cnt	3
+many_count_5	["one.png", "two.jpg", "three.gif", "four.txt", "five.txt"]
+many_count_6	["one.png", "two.jpg", "three.gif", "four.txt", "five.txt", "six.png"]
+many_blob_shared	1
+many_detach	[false, true]
+many_reattach	["seven.png"]
+many_purge	[false, 0, 6, true]

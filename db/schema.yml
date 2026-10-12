@@ -1,0 +1,101 @@
+---
+active_storage_blobs:
+  columns:
+  - name: id
+    type: int8
+    nullable: 'NO'
+    default: nextval('active_storage_blobs_id_seq'::regclass)
+  - name: key
+    type: varchar
+    nullable: 'NO'
+    default:
+  - name: filename
+    type: varchar
+    nullable: 'NO'
+    default:
+  - name: content_type
+    type: varchar
+    nullable: 'YES'
+    default:
+  - name: metadata
+    type: text
+    nullable: 'YES'
+    default:
+  - name: service_name
+    type: varchar
+    nullable: 'NO'
+    default:
+  - name: byte_size
+    type: int8
+    nullable: 'NO'
+    default:
+  - name: checksum
+    type: varchar
+    nullable: 'YES'
+    default:
+  - name: created_at
+    type: timestamp
+    nullable: 'NO'
+    default: now()
+  - name: updated_at
+    type: timestamp
+    nullable: 'YES'
+    default:
+active_storage_attachments:
+  columns:
+  - name: id
+    type: int8
+    nullable: 'NO'
+    default: nextval('active_storage_attachments_id_seq'::regclass)
+  - name: name
+    type: varchar
+    nullable: 'NO'
+    default:
+  - name: record_type
+    type: varchar
+    nullable: 'NO'
+    default:
+  - name: record_id
+    type: int8
+    nullable: 'NO'
+    default:
+  - name: blob_id
+    type: int8
+    nullable: 'NO'
+    default:
+  - name: created_at
+    type: timestamp
+    nullable: 'NO'
+    default: now()
+  - name: updated_at
+    type: timestamp
+    nullable: 'YES'
+    default:
+users:
+  columns:
+  - name: id
+    type: int8
+    nullable: 'NO'
+    default: nextval('users_id_seq'::regclass)
+  - name: created_at
+    type: timestamp
+    nullable: 'YES'
+    default:
+  - name: updated_at
+    type: timestamp
+    nullable: 'YES'
+    default:
+galleries:
+  columns:
+  - name: id
+    type: int8
+    nullable: 'NO'
+    default: nextval('galleries_id_seq'::regclass)
+  - name: created_at
+    type: timestamp
+    nullable: 'YES'
+    default:
+  - name: updated_at
+    type: timestamp
+    nullable: 'YES'
+    default:

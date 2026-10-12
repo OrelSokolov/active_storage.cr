@@ -1,0 +1,27 @@
+svc_exists	true
+svc_download	SERVICE DATA
+svc_missing	false
+svc_delete	false
+fn_sanitize	fu Man Chu.jpg
+fn_base	fu Man Chu
+fn_ext	jpg
+fn_empty	
+blob_byte_size	9
+blob_checksum	UTDPHWM1escTLYyQvsyM0w==
+blob_md5_manual	UTDPHWM1escTLYyQvsyM0w==
+blob_content_type	text/plain
+blob_filename	report.txt
+blob_key_shape	true
+blob_find	true
+blob_download	BLOB DATA
+blob_text?	true
+blob_image?	false
+blob_video?	false
+att_attached	true
+att_blob_size	12
+att_blob_ct	image/png
+att_image?	true
+att_download	AVATAR BYTES
+att_filename	me.png
+att_new_user	false
+att_detach	[false, true]
