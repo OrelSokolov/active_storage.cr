@@ -3,10 +3,13 @@ version: 0.1.0
 crystal: ">= 1.21.0"
 dependencies:
   active_support_cr:
-    path: ../active_support.cr
+    github: OrelSokolov/active_support.cr
+    version: ~> 0.1.0
   active_record_cr:
-    path: ../active_record.cr
+    github: OrelSokolov/active_record.cr
+    version: ~> 0.1.0
   # Only needed by src/controllers.cr (direct upload HTTP layer, opt-in
   # require — not pulled in by the umbrella src/active_storage_cr.cr).
   action_pack_cr:
-    path: ../action_pack.cr
+    github: OrelSokolov/action_pack.cr
+    version: ~> 0.1.0

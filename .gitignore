@@ -6,3 +6,5 @@
 /active_storage_cr
 db/schema.yml.bak
 *.log
+/shard.lock
+/shard.override.yml
