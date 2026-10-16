@@ -3,11 +3,13 @@
 A 1:1 Crystal port of **activestorage 8.1.4** (the Rails engine) under the
 same `ActiveStorage` namespace: `has_one_attached`/`has_many_attached` on
 ActiveRecord models, Disk and S3/MinIO services, image variants (via the
-`vips` CLI), and Rails-compatible `signed_id` tokens
+`vips` CLI), Marcel-backed blob identification, and Rails-compatible
+`signed_id` tokens
 (`urlsafe_b64_nopad(...) + "--" + hmac_sha256-hex`, byte-for-byte against
 the Rails 8.1 verifier). The S3 client is AWS SigV4 on OpenSSL +
-`HTTP::Client` — no SDK. Suite: **95/95** specs replaying
-27 + 19 + 16 + 37 oracle cases recorded from the real gem.
+`HTTP::Client` — no SDK. Suite: **113/113** specs replaying
+27 + 19 + 16 + 37 oracle cases recorded from the real gem
+(+ identify cases verified against the Ruby marcel gem).
 
 > ⚠️ EXPERIMENTAL FRAMEWORK, DO NOT USE IN PRODUCTION YET.
 
@@ -23,10 +25,12 @@ dependencies:
 shards install
 ```
 
-Depends on `active_support.cr` and `active_record.cr`; the direct-upload
+Depends on `active_support.cr`, `active_record.cr`, `marcel.cr`
+(blob identification, format/content-type of variations) and
+`image_processing.cr` (variant processing — `variant_processor = :vips`
+needs libvips, `:mini_magick`/default needs ImageMagick 7); the direct-upload
 HTTP layer additionally needs `action_pack.cr` (opt-in require, not pulled
-in by the umbrella `active_storage_cr`). Variants need the `vips` binary
-in PATH.
+in by the umbrella `active_storage_cr`).
 
 ## Usage
 
@@ -88,12 +92,13 @@ require "active_storage_cr/controllers"
 | `config/storage.yml` registry, per-blob service (`service_name`) | ✅ | Single global `ActiveStorage.service` (name kept in tokens, not dispatched) | ❌ |
 | `Mirror` service | ✅ | Not ported | ❌ |
 | `custom_metadata`, `analyzed?`/AnalyzeJob | ✅ | Not ported | ❌ |
+| Blob identification (`before_save :identify`, `identified?`) | ✅ (marcel) | `marcel_cr`: magic bytes > filename > declared type; `create_and_upload!` unfurl semantics | ✅ |
 
 ### Variants & representations
 
 | Feature | Original | Port | Status |
 |---|---|---|---|
-| `variant(resize_to_limit:/resize_to_fill:/resize_and_pad:/crop:/rotate:/format:)` | ✅ (ruby-vips) | Same options, shell-out to `vips` CLI; png/jpg/webp/gif/tiff/bmp/avif | ✅ |
+| `variant(resize_to_limit:/resize_to_fill:/resize_and_pad:/crop:/rotate:/format:/…)` | ✅ (image_processing) | Any image_processing op through `ActiveStorage::Transformers` (`variant_processor`: `:mini_magick` default / `:vips` / `:disabled`, as in 8.1.4) | ✅ |
 | `#url`, `#processed` (lazy + cache by variation key) | ✅ | Same; key shape `variants/{key}/[0-9a-f]{64}` matches | ✅ |
 | Variation key derivation | HMAC-verifier + SHA256 | SHA256 of canonical JSON (same shape, different bytes) | ⚠️ partial |
 | `preview` (ffmpeg/poppler), `representation` | ✅ | Not ported | ❌ |
@@ -132,7 +137,7 @@ Full list with rationale: `PLAN.md` (Russian).
 ## Testing
 
 ```sh
-crystal spec   # 95/95 — needs local PostgreSQL (db crails_as_test)
+crystal spec   # 113/113 — needs local PostgreSQL (db crails_as_test)
 ```
 
 The S3 group additionally needs MinIO on `127.0.0.1:9000` (buckets

@@ -45,6 +45,35 @@
 - `ActiveStorage::Current.url_options` — fiber-local.
 - Утиная типизация attachable (7 форм в Rails) → перегрузки/union.
 
+## Статус (Iteration 8 — marcel identification + image_processing transformers)
+
+- Зависимости: `marcel_cr` (blob identify, формат/content_type вариаций) и
+  `image_processing_cr` (обработка вариантов) — как в гемспеке Rails
+  (marcel — жёсткая зависимость, image_processing — движок вариантов).
+- `Blob`: порт `before_save :identify, if: :unidentified?` (magic-байты
+  Marcel > имя файла > заявленный тип), `identify`/`identified?`/
+  `unidentified?`; `create_and_upload!` с незаявленным content_type
+  сниффает из io (семантика unfurl). Спек: `spec/identify_spec.cr`
+  (сверено с Ruby marcel на той же машине).
+- `Transformers` (`src/transformers.cr`): порт transformer.rb /
+  null_transformer.rb / image_processing_transformer.rb / vips.rb /
+  image_magick.rb 8.1.4 — варианты идут через image_processing_cr;
+  `ActiveStorage.variant_processor` (дефолт `:mini_magick`, как в 8.1.4) →
+  `variant_transformer` (`:vips`/`:disabled`/override). Allowlist
+  `supported_image_processing_methods` + `unsupported_image_processing_arguments`
+  для mini_magick портированы. Отклонения: transform по путям файлов (не
+  open Tempfile), `Vips.block_untrusted` не портирован (нет в
+  image_processing.cr 1.14).
+- `Variation`: format валидируется `Marcel::Magic.by_extension`,
+  content_type = `Marcel::MimeType.for(extension:)` (как в 8.1.4, без
+  хардкод-таблицы); ключ вариации не изменился (canonical JSON → SHA256).
+  Шелл-аут `vips` CLI удалён.
+- Oracle s3: харнесс оригинала пинил `variant_processor = :vips` —
+  `spec/s3_spec.cr` делает то же (`before_all`), `after_all` возвращает
+  дефолт. Юнит: `spec/transformers_spec.cr` (оба процессора, disabled,
+  валидации формата/методов/аргументов).
+- Сьют: 113/113 (101 + 12 transformers; vips 8.16, IM 7.1.2).
+
 ## Статус (Iteration 7 — has_many_attached + signed_id + direct upload)
 
 - Oracle many: `oracle/cases_many.rb` → `oracle/expected_many.yml`, 19

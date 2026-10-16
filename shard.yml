@@ -2,6 +2,12 @@ name: active_storage_cr
 version: 0.1.0
 crystal: ">= 1.21.0"
 dependencies:
+  marcel_cr:
+    github: OrelSokolov/marcel.cr
+    version: ~> 2.1.0
+  image_processing_cr:
+    github: OrelSokolov/image_processing.cr
+    version: ~> 1.14.0
   active_support_cr:
     github: OrelSokolov/active_support.cr
     version: ~> 0.1.0

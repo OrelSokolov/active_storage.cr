@@ -1,5 +1,6 @@
 # ActiveStorage::Blob — AR-backed blob record + upload/download/purge +
-# signed_id + direct-upload helpers.
+# signed_id + direct-upload helpers + Marcel-backed identification
+# (`before_save :identify`, as in the gem).
 # Oracle: blob_* cases (activestorage 8.1.4): MD5-base64 checksum,
 # content-type predicates, key token shape [A-Za-z0-9]{24};
 # sid_* / disk_* cases (oracle/cases_signed_id.rb): signed_id wire format
@@ -18,14 +19,17 @@ module ActiveStorage
     end
 
     def self.create_and_upload!(io : String, filename : String,
-                                content_type : String) : self
+                                content_type : String? = nil) : self
       key = generate_key
       checksum = Checksum.md5_base64(io)
       ActiveStorage.service.upload(key, io, checksum)
       create!({
-        "key"          => key,
-        "filename"     => filename,
-        "content_type" => content_type,
+        "key"      => key,
+        "filename" => filename,
+        # The gem's unfurl: an undeclared content type is sniffed from
+        # the io via Marcel; a declared one is trusted as-is.
+        "content_type" => content_type || Marcel::MimeType.for(io,
+          name: filename, declared_type: nil),
         "metadata"     => nil,
         "service_name" => ActiveStorage.service_name,
         "byte_size"    => io.bytesize.to_i64,
@@ -97,6 +101,32 @@ module ActiveStorage
 
     def download : String
       ActiveStorage.service.download(key.not_nil!)
+    end
+
+    # Rails: `before_save :identify, if: :unidentified?` — a blob saved
+    # without a declared content type gets one from its magic bytes
+    # (Marcel::MimeType.for(download, name:, declared_type:)).
+    before_save :identify
+
+    def identify : Nil
+      unless identified?
+        self.content_type = identify_content_type
+      end
+    end
+
+    # The gem has no `identified` column either: presence of the
+    # content_type column is the flag.
+    def identified? : Bool
+      !content_type.to_s.empty?
+    end
+
+    def unidentified? : Bool
+      !identified?
+    end
+
+    private def identify_content_type : String
+      Marcel::MimeType.for(download, name: filename.to_s,
+        declared_type: content_type)
     end
 
     def purge : Nil

@@ -245,6 +245,10 @@ if minio_reachable?
       # leave it pointing at their own Disk services.
       ActiveStorage.service = service
 
+      # The oracle harness (oracle/cases_s3.rb) pins the vips variant
+      # processor before generating variant fixtures — mirror it.
+      ActiveStorage.variant_processor = :vips
+
       # --- S3 service ---
       service.upload("svc/key1", "SERVICE DATA",
         checksum: ActiveStorage::Checksum.md5_base64("SERVICE DATA"))
@@ -263,6 +267,11 @@ if minio_reachable?
         filename: "racecar.bin", byte_size: S3DU_DATA.bytesize.to_i64,
         checksum: ActiveStorage::Checksum.md5_base64(S3DU_DATA),
         content_type: "application/octet-stream")
+    end
+
+    after_all do
+      # Back to the 8.1.4 default for other groups.
+      ActiveStorage.variant_processor = :mini_magick
     end
 
     EXPECTED_S3.each do |id, expected|
