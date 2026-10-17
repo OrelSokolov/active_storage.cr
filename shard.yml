@@ -1,5 +1,5 @@
 name: active_storage_cr
-version: 0.1.0
+version: 0.1.1
 crystal: ">= 1.21.0"
 dependencies:
   marcel_cr:
@@ -18,4 +18,4 @@ dependencies:
   # require — not pulled in by the umbrella src/active_storage_cr.cr).
   action_pack_cr:
     github: OrelSokolov/action_pack.cr
-    version: ~> 0.1.0
+    version: ">= 0.1.0"
