@@ -1,7 +1,10 @@
 name: active_storage_cr
-version: 0.1.1
+version: 0.1.2
 crystal: ">= 1.21.0"
 dependencies:
+  attr_reader_cr:
+    github: OrelSokolov/attr_reader.cr
+    version: ~> 0.1.0
   marcel_cr:
     github: OrelSokolov/marcel.cr
     version: ~> 2.1.0

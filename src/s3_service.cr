@@ -212,7 +212,7 @@ module ActiveStorage
     # AWS Signature V4 — one instance signs one operation (headers or
     # presigned query) against a single timestamp.
     private struct SigV4
-      getter amz_date : String
+      attr_reader amz_date : String
 
       def initialize(@access_key_id : String, @secret_access_key : String,
                      @region : String, time : Time)

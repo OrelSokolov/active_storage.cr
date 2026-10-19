@@ -4,8 +4,8 @@
 
 module ActiveStorage
   class Variant
-    getter blob : Blob
-    getter variation : Variation
+    attr_reader blob : Blob
+    attr_reader variation : Variation
 
     def initialize(@blob : Blob, @variation : Variation)
     end

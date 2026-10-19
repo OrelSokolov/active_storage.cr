@@ -12,6 +12,7 @@ require "./transformers"
 require "./variation"
 require "./variant"
 require "./attached"
+require "attr_reader_cr"
 
 module ActiveStorage
   VERSION = "0.1.0"

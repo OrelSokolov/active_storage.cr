@@ -22,7 +22,7 @@ module ActiveStorage
     def initialize(@name : String)
     end
 
-    getter name : String
+    attr_reader name : String
 
     abstract def upload(key : String, data : String | Bytes, checksum : String? = nil, content_type : String? = nil) : Nil
     abstract def download(key : String) : String

@@ -20,7 +20,7 @@ module ActiveStorage
   module Transformers
     # Port of transformers/transformer.rb.
     class Transformer
-      getter transformations : Hash(String, Variation::Value)
+      attr_reader transformations : Hash(String, Variation::Value)
 
       def initialize(@transformations : Hash(String, Variation::Value))
       end

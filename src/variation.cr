@@ -21,7 +21,7 @@ module ActiveStorage
 
     alias Value = Array(Int32) | Int32 | String
 
-    getter transformations : Hash(String, Value)
+    attr_reader transformations : Hash(String, Value)
 
     def initialize(@transformations : Hash(String, Value))
     end

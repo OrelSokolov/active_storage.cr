@@ -3,7 +3,7 @@
 
 module ActiveStorage
   class Filename
-    getter raw : String
+    attr_reader raw : String
 
     def initialize(@raw : String)
     end
