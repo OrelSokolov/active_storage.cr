@@ -124,6 +124,66 @@ module ActiveStorage
       !identified?
     end
 
+    # --- Blob::Analyzable (activestorage 8.1.4) ----------------------
+    # Oracle: analyzer_* cases (oracle/cases_analyzer.rb): metadata JSON
+    # as stored by the gem, byte-for-byte
+    # ({"width":3840,"height":2160,"analyzed":true}).
+
+    # Extracts and stores metadata from the file associated with this
+    # blob using the first registered analyzer that accepts it
+    # (ActiveStorage.analyzers; NullAnalyzer fallback → analyzed only).
+    def analyze : Nil
+      update({"metadata" => ActiveStorage::Analyzer.metadata_json(analyzable_metadata)})
+    end
+
+    # analyze with validations (update! vs update — the gem has only
+    # #analyze on update!; the port exposes both AR spellings).
+    def analyze! : Nil
+      update!({"metadata" => ActiveStorage::Analyzer.metadata_json(analyzable_metadata)})
+    end
+
+    # Enqueues ActiveStorage::AnalyzeJob when a job backend is wired
+    # (src/analyze_job.cr — opt-in), otherwise performs inline.
+    def analyze_later : Nil
+      if analyzer_class.analyze_later?
+        if job = ActiveStorage.analyze_job
+          job.call(self)
+        else
+          analyze
+        end
+      else
+        analyze
+      end
+    end
+
+    # The blob has been analyzed (metadata carries "analyzed": true;
+    # the gem's separate `analyzed` store accessor reads the same key).
+    def analyzed? : Bool
+      ActiveStorage::Analyzer.parse_metadata(metadata.to_s)["analyzed"]? == true
+    end
+
+    # The metadata column as a Hash (nil/blank column → {}).
+    def metadata_hash : Hash(String, Analyzer::Value)
+      ActiveStorage::Analyzer.parse_metadata(metadata.to_s)
+    end
+
+    # Analyzable#analyze: metadata.merge(extract_metadata_via_analyzer)
+    # — existing keys first, then the analyzer's, "analyzed" last.
+    private def analyzable_metadata : Hash(String, Analyzer::Value)
+      metadata_hash.merge(extract_metadata_via_analyzer)
+    end
+
+    private def extract_metadata_via_analyzer : Hash(String, Analyzer::Value)
+      result = analyzer_class.new(self).metadata
+      result["analyzed"] = true
+      result
+    end
+
+    private def analyzer_class : Analyzer.class
+      ActiveStorage.analyzers.find { |klass| klass.accept?(self) } ||
+        Analyzer::NullAnalyzer
+    end
+
     private def identify_content_type : String
       Marcel::MimeType.for(download, name: filename.to_s,
         declared_type: content_type)

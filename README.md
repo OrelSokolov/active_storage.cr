@@ -3,12 +3,15 @@
 A 1:1 Crystal port of **activestorage 8.1.4** (the Rails engine) under the
 same `ActiveStorage` namespace: `has_one_attached`/`has_many_attached` on
 ActiveRecord models, Disk and S3/MinIO services, image variants (via the
-`vips` CLI), Marcel-backed blob identification, and Rails-compatible
+`vips` CLI), Marcel-backed blob identification, blob analysis
+(`Blob#analyze`/`analyze_later` — width/height from images through
+vips/MiniMagick, duration/rotation from video/audio via ffprobe,
+NullAnalyzer fallback), and Rails-compatible
 `signed_id` tokens
 (`urlsafe_b64_nopad(...) + "--" + hmac_sha256-hex`, byte-for-byte against
 the Rails 8.1 verifier). The S3 client is AWS SigV4 on OpenSSL +
-`HTTP::Client` — no SDK. Suite: **113/113** specs replaying
-27 + 19 + 16 + 37 oracle cases recorded from the real gem
+`HTTP::Client` — no SDK. Suite: **134/134** specs replaying
+27 + 19 + 16 + 37 + 21 oracle cases recorded from the real gem
 (+ identify cases verified against the Ruby marcel gem).
 
 > ⚠️ EXPERIMENTAL FRAMEWORK, DO NOT USE IN PRODUCTION YET.
@@ -131,6 +134,16 @@ require "active_storage_cr/controllers"
   blobs/attachments tables carry `updated_at` (Rails' tables don't).
 - Attachables are typed as unions/overloads (String io, `Blob`,
   `signed_id`); `io:` is a `String` of bytes, not an IO object.
+- Analyzer port: analyzers download the blob to a temp file and work on
+  its PATH; `Blob#analyze_later` performs inline unless a job backend is
+  wired through the opt-in `src/analyze_job.cr` (active_job_cr);
+  `AnalyzeJob` carries the blob id, not a GlobalID. The gem's
+  Attachment `after_create_commit :analyze_blob_later` hook is not
+  ported — apps call `blob.analyze!` themselves. The gem's
+  metadata-stored `identified` flag is not written (the port's
+  `identify` predates it), so stored metadata lacks `"identified":true`.
+- ImageMagick analyzer shells out to `identify -format "%[orientation]"`
+  directly (image_processing.cr's MiniMagick has no orientation reader).
 
 Full list with rationale: `PLAN.md` (Russian).
 

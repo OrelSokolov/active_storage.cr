@@ -85,10 +85,11 @@ module ActiveStorage
     end
 
     # Public: the DiskController serves files through this (the gem's
-    # `named_disk_service(key[:service_name]).path_for`).
+    # `named_disk_service(key[:service_name]).path_for`). Fan-out
+    # layout as in the gem's DiskService: root/<key[0,2]>/<key[2,2]>/<key>.
     def path_for(key : String) : String
       raise ArgumentError.new("unsafe key: #{key}") if key.includes?("..")
-      File.join(@root, key)
+      File.join(@root, key[0, 2], key[2, 2], key)
     end
 
     # Verifier-signed token riding in the URL; DiskController#update
