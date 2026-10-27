@@ -26,6 +26,13 @@ module ActiveStorage
         blob
       end
 
+      # Rails: attach(ActionDispatch::Http::UploadedFile) — a multipart
+      # file part straight from params. Duck-typed (body/filename/
+      # content_type) so the shard compiles without action_pack_cr.
+      def attach(file) : Blob
+        attach(file.body, file.filename, file.content_type)
+      end
+
       def attached? : Bool
         find_attachment != nil
       end
@@ -173,11 +180,33 @@ class ActiveRecord::Base
     @as_attached_{{name.id}} : ActiveStorage::Attached::One?
 
     def {{name.id}} : ActiveStorage::Attached::One
-      @as_attached_{{name.id}} ||= ActiveStorage::Attached::One.new({{name.stringify}}, self)
+      @as_attached_{{name.id}} ||= ActiveStorage::Attached::One.new({{name.id.stringify}}, self)
     end
 
     def {{name.id}}_blob : ActiveStorage::Blob?
       {{name.id}}.blob
+    end
+
+    # The gem's setter (attached/model.rb): an uploaded file attaches,
+    # nil (an unselected file field) is a no-op — pending changes are
+    # dropped, the stored attachment stays.
+    def {{name.id}}=(file : ActionController::UploadedFile) : Nil
+      {{name.id}}.attach(file.body, file.filename, file.content_type)
+    end
+
+    def {{name.id}}=(nothing : Nil) : Nil
+    end
+
+    # Route update!(params)'s attachment params here (assign_attributes in
+    # active_record_cr/parameters.cr calls this first). super chains when
+    # the model declares several attachments.
+    def __assign_attachment(name : String, value) : Bool
+      if name == {{name.id.stringify}}
+        self.{{name.id}} = value.as?(ActionController::UploadedFile)
+        true
+      else
+        super
+      end
     end
   end
 
@@ -185,7 +214,7 @@ class ActiveRecord::Base
     @as_attached_{{name.id}} : ActiveStorage::Attached::Many?
 
     def {{name.id}} : ActiveStorage::Attached::Many
-      @as_attached_{{name.id}} ||= ActiveStorage::Attached::Many.new({{name.stringify}}, self)
+      @as_attached_{{name.id}} ||= ActiveStorage::Attached::Many.new({{name.id.stringify}}, self)
     end
 
     def {{name.id}}_attachments : Array(ActiveStorage::Attachment)
