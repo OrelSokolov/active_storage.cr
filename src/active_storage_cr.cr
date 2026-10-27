@@ -12,6 +12,7 @@ require "./transformers"
 require "./analyzer"
 require "./variation"
 require "./variant"
+require "./preview"
 require "./attached"
 require "attr_reader_cr"
 

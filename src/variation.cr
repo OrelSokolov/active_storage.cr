@@ -26,6 +26,19 @@ module ActiveStorage
     def initialize(@transformations : Hash(String, Value))
     end
 
+    # reverse_merge(defaults): keys already present win; missing defaults
+    # are inserted FIRST (Ruby's defaults.merge(self) keeps the defaults'
+    # order, then appends the existing keys) — so `default_to({"format" =>
+    # f})` on {resize_to_limit: …} yields format-first insertion order.
+    def default_to(defaults : Hash(String, V)) : Variation forall V
+      merged = {} of String => Value
+      defaults.each { |k, v| merged[k] = v }
+      @transformations.each do |k, v|
+        merged[k] = v unless merged[k]?
+      end
+      Variation.new(merged)
+    end
+
     # transformations.fetch(:format, :png), validated through Marcel
     # (the gem: `Marcel::Magic.by_extension(format).nil? → ArgumentError`).
     def format : String
